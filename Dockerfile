@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     make \
     g++ \
     unzip \
+    wget \
     pkg-config \
     libatlas-base-dev \
     libjpeg-dev \
@@ -29,26 +30,27 @@ RUN apt-get update && apt-get install -y \
     libgtkglext1-dev \
     #libpython3.6-dev \
     #libpython3.6-numpy \
-    ibyaml-cpp-dev \
     libeigen3-dev \
     libpcl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
     
+    
+WORKDIR /workspace
 
 # 下载 OpenCV 和 OpenCV Contrib 源代码
-RUN git clone --depth 1 https://github.com/opencv/opencv.git /opencv && \
-    git clone --depth 1 https://github.com/opencv/opencv_contrib.git /opencv_contrib && \
-    cd /opencv && \
+RUN git clone --depth 1 https://github.com/opencv/opencv.git /workspace/opencv && \
+    git clone --depth 1 https://github.com/opencv/opencv_contrib.git /workspace/opencv_contrib && \
+    cd /workspace/opencv && \
     git checkout 4.x && \
-    cd /opencv_contrib && \
+    cd /workspace/opencv_contrib && \
     git checkout 4.x
 
 # 创建并进入构建目录
-RUN cd /opencv && mkdir build && cd build && \
+RUN cd /workspace/opencv && mkdir build && cd build && \
     cmake -D CMAKE_BUILD_TYPE=Release \
           -D CMAKE_INSTALL_PREFIX=/usr/local \
-          -D OPENCV_EXTRA_MODULES_PATH=/opencv_contrib/modules \
+          -D OPENCV_EXTRA_MODULES_PATH=/workspace/opencv_contrib/modules \
           -D WITH_CUDA=OFF \
           -D WITH_CUDNN=OFF \
           -D OPENCV_DNN_CUDA=OFF \
@@ -68,6 +70,12 @@ RUN cd /opencv && mkdir build && cd build && \
     make install && \
     ldconfig
 
+RUN git clone https://github.com/jbeder/yaml-cpp.git /workspace/yamlcpp
+RUN cd /workspace/yamlcpp && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=on .. && \
+    make -j16 && \
+    make install && \
+    ldconfig
 
 # 更新和安装基本工具
 RUN apt-get update && apt-get install -y \
@@ -78,20 +86,29 @@ RUN apt-get update && apt-get install -y \
     python3-wheel \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-    
+
+  
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN apt install curl # if you haven't already installed curl
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
-RUN apt install ros-noetic-desktop-full
-RUN echo "source /opt/ros/noetic/setup.bash" >> .bashrc
-RUN source ~/.bashrc
-RUN apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
-RUN apt install python3-rosdep
+RUN apt-get update
+RUN apt install ros-noetic-desktop-full -y
+RUN echo "source /opt/ros/noetic/setup.bash" >> /etc/bash.bashrc
+RUN apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
 RUN rosdep init
 RUN rosdep update
 
+RUN pip3 install ruamel.yaml
+RUN pip3 install gdown
 
-RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git ~/BEVDet/src
+RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDet/src && \
+    cd /workspace/BEVDet/src && \
+    mkdir model && \
+    gdown --folder https://drive.google.com/drive/folders/1jSGT0PhKOmW3fibp6fvlJ7EY6mIBVv6i && \
+    mv BEVDet-TensorRT-Onnx/* model && \
+    rm -r BEVDet-TensorRT-Onnx
+    
+
 
 # 设置环境变量
 ENV PATH /usr/local/cuda/bin:${PATH}
