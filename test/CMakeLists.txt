@@ -73,7 +73,7 @@ include_directories(
   ${CUDA_INCLUDE_DIRS}
   ${TENSORRT_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/../include
   ${EIGEN3_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )

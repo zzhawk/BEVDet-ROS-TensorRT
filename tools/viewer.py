@@ -92,7 +92,8 @@ def main():
     # InputFile: ../sample0/0.bin
     # OutputLidarBox: ../sample0/sample0_lidarbox.txt
     # LoadDim 5
-    result, data = dataloader(config['InputFile'], config['OutputLidarBox'], config['LoadDim'])
+
+    result, data = dataloader(config['CloudFile'], config['OutputLidarBox'], config['LoadDim'])
     print(data.shape)
     print(result.shape)
 

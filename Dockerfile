@@ -137,7 +137,8 @@ RUN pip3 install onnx
 RUN pip3 install gdown
 RUN apt install -y \
 	ros-noetic-jsk-recognition-msgs
-
+RUN pip install --ignore-installed -U blinker
+RUN pip install open3d
 RUN apt install -y nvidia-container*
 
 # 设置环境变量
