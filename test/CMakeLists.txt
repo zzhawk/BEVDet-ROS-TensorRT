@@ -84,16 +84,16 @@ link_directories(
 )
 
 cuda_add_executable(bevdemo 
-    test/demo_bevdet.cpp 
-    src/bevdet.cpp 
-    src/preprocess.cu 
-    src/bevpool.cu 
-    src/iou3d_nms.cu
-    src/postprocess.cu
-    src/data.cpp
-    src/grid_sampler.cu
-    src/cpu_jpegdecoder.cpp
-    src/nvjpegdecoder.cpp
+    demo_bevdet.cpp 
+    ../src/bevdet.cpp 
+    ../src/preprocess.cu 
+    ../src/bevpool.cu 
+    ../src/iou3d_nms.cu
+    ../src/postprocess.cu
+    ../src/data.cpp
+    ../src/grid_sampler.cu
+    ../src/cpu_jpegdecoder.cpp
+    ../src/nvjpegdecoder.cpp
 )
 
 target_link_libraries(bevdemo 
@@ -105,16 +105,16 @@ target_link_libraries(bevdemo
 
 # --------------
 cuda_add_executable(01test 
-    test/01test.cpp 
-    src/bevdet.cpp 
-    src/preprocess.cu 
-    src/bevpool.cu 
-    src/iou3d_nms.cu
-    src/postprocess.cu
-    src/data.cpp
-    src/grid_sampler.cu
-    src/cpu_jpegdecoder.cpp
-    src/nvjpegdecoder.cpp
+    01test.cpp 
+    ../src/bevdet.cpp 
+    ../src/preprocess.cu 
+    ../src/bevpool.cu 
+    ../src/iou3d_nms.cu
+    ../src/postprocess.cu
+    ../src/data.cpp
+    ../src/grid_sampler.cu
+    ../src/cpu_jpegdecoder.cpp
+    ../src/nvjpegdecoder.cpp
 )
 
 target_link_libraries(01test
@@ -129,16 +129,16 @@ find_package(PCL REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 
 cuda_add_executable(view
-    test/view.cpp
-    src/bevdet.cpp 
-    src/preprocess.cu 
-    src/bevpool.cu 
-    src/iou3d_nms.cu
-    src/postprocess.cu
-    src/data.cpp
-    src/grid_sampler.cu
-    src/cpu_jpegdecoder.cpp
-    src/nvjpegdecoder.cpp
+    view.cpp
+    ../src/bevdet.cpp 
+    ../src/preprocess.cu 
+    ../src/bevpool.cu 
+    ../src/iou3d_nms.cu
+    ../src/postprocess.cu
+    ../src/data.cpp
+    ../src/grid_sampler.cu
+    ../src/cpu_jpegdecoder.cpp
+    ../src/nvjpegdecoder.cpp
 )
 
 target_link_libraries(view
