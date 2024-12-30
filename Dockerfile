@@ -148,6 +148,8 @@ ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/compat:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 	
 RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDet/src && \
+    git checkout orin && \
+    git pull && \
     cd /workspace/BEVDet/src && \ 
     mkdir model && \
     gdown --folder https://drive.google.com/drive/folders/1jSGT0PhKOmW3fibp6fvlJ7EY6mIBVv6i && \
@@ -157,7 +159,7 @@ RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDe
     # Has to run following in run time...
     # Due to err: ImportError: libnvdla_compiler.so: cannot open shared object file: No such file or directory
     # python3 tools/export_engine.py cfgs/bevdet_lt_depth.yaml model/img_stage_lt_d.onnx model/bev_stage_lt_d.onnx --postfix="_lt_d_fp16" --fp16=True && \
-    # mv model/imbev_stage_lt_d_fp16.engine ckpts/bev_stage_lt_d_fp16.engine && \
+    # mv model/img_stage_lt_d_fp16.engine ckpts/img_stage_lt_d_fp16.engine && \
     # mv model/bev_stage_lt_d_fp16.engine ckpts/bev_stage_lt_d_fp16.engine
 
     # err: bevdet_ros.cpp:(.text+0x23d8): undefined reference to `cv::Mat::Mat()'

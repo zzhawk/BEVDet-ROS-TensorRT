@@ -3,6 +3,11 @@ project(bevdet)
 
 add_compile_options(-W)
 add_compile_options(-std=c++14)
+
+#SET(OpenCV_DIR /usr/lib/aarch64-linux-gnu/cmake/opencv4)
+#SET(OpenCV_INCLUDE_DIRS /usr/local/include/opencv4)
+#SET(OpenCV_LIBRARY_DIRS /usr/share/doc/)
+
 set(GENCODE ${GENCODE} -gencode arch=compute_86,code=compute_86)
 set(CMAKE_CXX_FLAGS_RELEASE "-Wno-deprecated-declarations -O3")
 set(CMAKE_BUILD_TYPE "RELEASE")
