@@ -19,8 +19,8 @@ CamConfig: sample0/sample0000.yaml
 CloudFile: sample0/0.bin
 OutputLidarBox: sample0/sample0_lidarbox.txt
 
-ImgStageEngine: ckpts/img_stage_lt_d.engine
-BEVStageEngine: ckpts/bev_stage_lt_d.engine
+ImgStageEngine: ckpts/img_stage_lt_d_fp16.engine
+BEVStageEngine: ckpts/bev_stage_lt_d_fp16.engine
 
 
 OutputDir: output

@@ -67,7 +67,7 @@ WORKDIR /workspace
 #	mkdir glibc-2.33/build && \
 #	cd glibc-2.33/build && \
 #	../configure --prefix=/opt/glibc && \
-#	make -j16 && \
+#	make -j12 && \
 #	make install && \
 #	ldconfig
 
@@ -100,14 +100,14 @@ WORKDIR /workspace
 #           #-D PYTHON3_LIBRARIES=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
 #           #-D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include \
 #           .. && \
-#     make -j16 && \
+#     make -j12 && \
 #     make install && \
 #     ldconfig
 
 RUN git clone https://github.com/jbeder/yaml-cpp.git /workspace/yamlcpp
 RUN cd /workspace/yamlcpp && mkdir build && cd build && \
     cmake -DBUILD_SHARED_LIBS=on .. && \
-    make -j16 && \
+    make -j12 && \
     make install && \
     ldconfig
 
@@ -127,52 +127,54 @@ RUN apt install curl
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 RUN apt-get update
 RUN apt install ros-noetic-desktop-full -y
-# RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
 RUN rosdep init
 RUN rosdep update
 
-RUN apt-get install -y ros-$ROS_DISTRO-jsk-rviz-plugins
-
 RUN git clone https://github.com/ros-perception/vision_opencv.git /workspace/vision_opencv
 RUN cd /workspace/vision_opencv  && \
     git checkout noetic  && \
+    cd cv_bridge  && \
     mkdir build && cd build && \
-    cmake .. && make -j16 && make install && \
-    cmake -DCMAKE_INSTALL_PREFIX=/opt/ros/${ROS_DISTRO} .. && make -j16 && make install && \
+    /bin/bash -c "source /opt/ros/noetic/setup.bash;cmake ..; make -j12 && make install" && \
+    /bin/bash -c "source /opt/ros/noetic/setup.bash;cmake -DCMAKE_INSTALL_PREFIX=/opt/ros/${ROS_DISTRO} .. && make -j12 && make install" && \
     ldconfig
 
 RUN pip3 install ruamel.yaml==0.17.32
 RUN pip3 install onnx
 RUN pip3 install gdown
+RUN pip3 install --ignore-installed -U blinker
+RUN pip3 install open3d
 RUN apt install -y \
-	ros-noetic-jsk-recognition-msgs
-RUN pip install --ignore-installed -U blinker
-RUN pip install open3d
-RUN apt install -y nvidia-container*
+	ros-noetic-jsk-recognition-msgs \
+    ros-noetic-jsk-rviz-plugins \
+    nvidia-container*
 
 # 设置环境变量
 #ENV NVIDIA_VISIBLE_DEVICES=all
 #ENV NVIDIA_DRIVER_CAPABILITIES=all
 #ENV CUDA_HOME="/usr/local/cuda"
+
+RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
+
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/compat:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 	
-RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDet/src && \
-    cd /workspace/BEVDet/src && \ 
-    git checkout orin && \
-    git pull && \
-    mkdir model && \
-    gdown --folder https://drive.google.com/drive/folders/1jSGT0PhKOmW3fibp6fvlJ7EY6mIBVv6i && \
-    mv BEVDet-TensorRT-Onnx/* model && \
-    rm -r BEVDet-TensorRT-Onnx
+# RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDet/src && \
+#     cd /workspace/BEVDet/src && \ 
+#     git checkout orin && \
+#     git pull && \
+#     mkdir model && \
+#     gdown --folder https://drive.google.com/drive/folders/1jSGT0PhKOmW3fibp6fvlJ7EY6mIBVv6i && \
+#     mv BEVDet-TensorRT-Onnx/* model && \
+#     rm -r BEVDet-TensorRT-Onnx
     
-    # Has to run following in run time...
-    # Due to err: ImportError: libnvdla_compiler.so: cannot open shared object file: No such file or directory
-    # python3 tools/export_engine.py cfgs/bevdet_lt_depth.yaml model/img_stage_lt_d.onnx model/bev_stage_lt_d.onnx --postfix="_lt_d_fp16" --fp16=True && \
-    # mv model/img_stage_lt_d_fp16.engine ckpts/img_stage_lt_d_fp16.engine && \
-    # mv model/bev_stage_lt_d_fp16.engine ckpts/bev_stage_lt_d_fp16.engine
-    # /bin/bash -c 'source /opt/ros/noetic/setup.bash; catkin_make'  && \
+#     # Has to run following in run time...
+#     # Due to err: ImportError: libnvdla_compiler.so: cannot open shared object file: No such file or directory
+#     # python3 tools/export_engine.py cfgs/bevdet_lt_depth.yaml model/img_stage_lt_d.onnx model/bev_stage_lt_d.onnx --postfix="_lt_d_fp16" --fp16=True && \
+#     # mv model/img_stage_lt_d_fp16.engine ckpts/img_stage_lt_d_fp16.engine && \
+#     # mv model/bev_stage_lt_d_fp16.engine ckpts/bev_stage_lt_d_fp16.engine
+#     # /bin/bash -c 'source /opt/ros/noetic/setup.bash; catkin_make'  && \
 
     
 
