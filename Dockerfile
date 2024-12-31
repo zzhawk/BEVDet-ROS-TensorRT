@@ -132,6 +132,16 @@ RUN apt install python3-rosdep python3-rosinstall python3-rosinstall-generator p
 RUN rosdep init
 RUN rosdep update
 
+RUN apt-get install -y ros-$ROS_DISTRO-jsk-rviz-plugins
+
+RUN git clone https://github.com/ros-perception/vision_opencv.git /workspace/vision_opencv
+RUN cd /workspace/vision_opencv  && \
+    git checkout noetic  && \
+    mkdir build && cd build && \
+    cmake .. && make -j16 && make install && \
+    cmake -DCMAKE_INSTALL_PREFIX=/opt/ros/${ROS_DISTRO} .. && make -j16 && make install && \
+    ldconfig
+
 RUN pip3 install ruamel.yaml==0.17.32
 RUN pip3 install onnx
 RUN pip3 install gdown
@@ -162,8 +172,6 @@ RUN git clone https://github.com/zzhawk/BEVDet-ROS-TensorRT.git /workspace/BEVDe
     # python3 tools/export_engine.py cfgs/bevdet_lt_depth.yaml model/img_stage_lt_d.onnx model/bev_stage_lt_d.onnx --postfix="_lt_d_fp16" --fp16=True && \
     # mv model/img_stage_lt_d_fp16.engine ckpts/img_stage_lt_d_fp16.engine && \
     # mv model/bev_stage_lt_d_fp16.engine ckpts/bev_stage_lt_d_fp16.engine
-
-    # err: bevdet_ros.cpp:(.text+0x23d8): undefined reference to `cv::Mat::Mat()'
     # /bin/bash -c 'source /opt/ros/noetic/setup.bash; catkin_make'  && \
 
     
